@@ -1,0 +1,53 @@
+int B = 9; 
+int L = 8; 
+int ledState = LOW; 
+int lastButtonState = LOW;
+int buttonState;
+int l123;
+int z;
+
+void setup() {
+  pinMode(L, OUTPUT); 
+  pinMode(B, INPUT);
+  Serial.begin(9600);
+  l123 = 0;
+}
+
+void loop() {
+  buttonState = digitalRead(B); 
+
+  if (buttonState == HIGH && lastButtonState == LOW) { 
+    l123++;
+
+    if (l123 == 1 || l123 == 2) {  // DAs ding ist einfacher kompakter anstatt 2 if zu machen einfach 1 if Code optimierung
+      ledState = !ledState;
+      digitalWrite(L, ledState);
+    }
+
+    if (l123 == 3) {
+      z = 0;
+      while (z < 1000) {   // hier wird  ne while schleife eingebaut um das blinken zu symoblisieren das break ist einfach da wenn man  denn button drückt stoppt die while schleife
+        delay(100);
+        if (digitalRead(B) == HIGH) { 
+          break;
+
+        }
+        digitalWrite(L, HIGH);
+        delay(100);
+        digitalWrite(L, LOW);
+        delay(100);
+        z++;
+      }
+    }
+  }
+  if (l123 >= 4) 
+  {
+    l123 = 0;
+  }
+
+  lastButtonState = buttonState; 
+  Serial.println(l123);
+  Serial.println(z);
+
+  delay(50);
+}
