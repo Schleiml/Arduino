@@ -1,0 +1,26 @@
+int L = 5;
+int B = 10;
+int Bstate = LOW;
+int Lstate = LOW;
+int lastBstate;
+
+void setup() {
+	pinMode(B, INPUT);
+	pinMode(L, OUTPUT);
+}
+
+void loop() {
+
+	Bstate = digitalRead(B);
+
+	if (Bstate == HIGH && lastBstate == LOW) {
+
+		Lstate = !Lstate;
+
+		digitalWrite(L, Lstate);
+	}
+
+	lastBstate = Bstate;
+
+	delay(50);
+}
