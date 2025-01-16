@@ -1,0 +1,19 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+String LCD;
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+  Serial.println("Bitte eingeben: ");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    LCD = Serial.readString();
+    lcd.clear();
+    lcd.print(LCD);
+  }
+} 
