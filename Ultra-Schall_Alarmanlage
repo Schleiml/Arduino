@@ -1,0 +1,41 @@
+long duration;
+float distance;
+
+int T = 9;
+int E = 10;
+int Buzz = 7;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(T, OUTPUT);
+  pinMode(E, INPUT);
+  pinMode(Buzz, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(T, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(T, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(T, LOW);
+
+  duration = pulseIn(E, HIGH);
+
+  distance = duration * 0.034 / 2;
+
+  if (distance <= 30.00)
+  {
+    digitalWrite(Buzz, HIGH);
+    delay(2000);
+  }
+  else {
+    digitalWrite(Buzz, LOW);
+  }
+
+  Serial.print(distance);
+  Serial.println("cm");
+
+  delay(50);
+}
+
