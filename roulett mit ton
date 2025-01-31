@@ -1,0 +1,78 @@
+int utz = 100;
+bool State = false;
+int R;
+int Runden = 2;
+int buzzer = 7;  // Buzzer an Pin 7
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(6, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);  // Grüne LED = Gewinn
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(9, INPUT);
+  pinMode(buzzer, OUTPUT);
+  randomSeed(analogRead(0));
+}
+
+void loop() {
+  Serial.println();
+  Serial.println(Runden);
+  
+  if (digitalRead(9)) {
+    State = true;
+    R = random(2, 7);
+  } else {
+    State = false;
+  }
+
+  if (State == true) {
+    while (Runden >= 0) {
+      // LED 6
+      digitalWrite(6, HIGH);
+      tone(buzzer, 400, utz);  // Verlust-Ton
+      delay(utz);
+      digitalWrite(6, LOW);
+
+      // LED 2
+      digitalWrite(2, HIGH);
+      tone(buzzer, 400, utz);  // Verlust-Ton
+      delay(utz);
+      digitalWrite(2, LOW);
+
+      // LED 3 (GRÜN, GEWINN)
+      digitalWrite(3, HIGH);
+      tone(buzzer, 1000, utz);  // Gewinn-Ton
+      delay(utz);
+      tone(buzzer, 1200, utz);  // Zweiter Gewinn-Ton
+      delay(utz);
+      digitalWrite(3, LOW);
+
+      // LED 4
+      digitalWrite(4, HIGH);
+      tone(buzzer, 400, utz);  // Verlust-Ton
+      delay(utz);
+      digitalWrite(4, LOW);
+
+      // LED 5
+      digitalWrite(5, HIGH);
+      tone(buzzer, 400, utz);  // Verlust-Ton
+      delay(utz);
+      digitalWrite(5, LOW);
+
+      Runden--;
+    }
+
+    // 🎵 Finale: Hoher Ton am Ende für Spannung
+    tone(buzzer, 1000, 500);
+    delay(500);
+  } 
+  else {
+    digitalWrite(R, HIGH);
+  }
+
+  if (Runden == -1) {
+    Runden = 2;
+  }
+}
