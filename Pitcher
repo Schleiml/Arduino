@@ -1,0 +1,14 @@
+int Regler;
+int P = A0;
+int B = 8;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(B, OUTPUT);
+}
+
+void loop() {
+  Regler = analogRead(P);
+  tone(8, Regler);
+  Serial.println(Regler);
+}
