@@ -1,0 +1,54 @@
+long duration;
+float distance;
+
+int T = 9;
+int E = 10;
+int L = 13;
+int B = 11;
+int S;
+
+bool running = false;
+unsigned long startTime;
+unsigned long stopTime;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(B, INPUT);
+  pinMode(T, OUTPUT);
+  pinMode(E, INPUT);
+  pinMode(L, OUTPUT);
+}
+
+void loop() {
+  S = digitalRead(B);
+
+  if (S == HIGH && !running) {
+    running = true;
+    startTime = millis();
+    Serial.println("Timer gestartet!");
+  }
+
+  digitalWrite(T, LOW);
+  delayMicroseconds(2);
+  digitalWrite(T, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(T, LOW);
+
+  duration = pulseIn(E, HIGH);
+  distance = duration * 0.034 / 2;
+
+  if (running && distance <= 1.0) {
+    stopTime = millis();
+    running = false;
+    unsigned long elapsedTime = stopTime - startTime;
+    Serial.print("Timer gestoppt! Zeit: ");
+    Serial.print(elapsedTime);
+    Serial.println(" ms");
+  }
+
+  Serial.print("Distanz: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  delay(200);
+}
