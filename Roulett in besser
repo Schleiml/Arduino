@@ -1,0 +1,64 @@
+const int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9};
+const int buttonPin = 10;
+const int numLeds = 8;
+const int Buzzer = 11;
+
+int currentLed = 0;
+bool isSpinning = false;
+
+void setup() {
+  for (int i = 0; i < numLeds; i++) {
+    pinMode(ledPins[i], OUTPUT);
+    digitalWrite(ledPins[i], LOW);
+  }
+
+  pinMode(buttonPin, INPUT);
+  pinMode(Buzzer, OUTPUT);
+  digitalWrite(Buzzer, LOW);
+  randomSeed(analogRead(0));
+}
+
+void loop() {
+  if (digitalRead(buttonPin) && !isSpinning) {
+    delay(50);  // Debounce
+    if (digitalRead(buttonPin)) {
+      spinRoulette();
+    }
+  }
+}
+
+void spinRoulette() {
+  isSpinning = true;
+  int spins = random(39, 49);
+  
+  for (int i = 0; i < spins; i++) {
+    digitalWrite(ledPins[currentLed], LOW);
+    currentLed = (currentLed + 1) % numLeds;
+    digitalWrite(ledPins[currentLed], HIGH);
+
+    playMelody(i);  // 🎶 Melodie während Spin
+
+    delay(100 - i * 2);
+  }
+
+  noTone(Buzzer); // Melodie stoppen
+  delay(100);    // Kleine Pause
+  playWinTone(); // 🎯 Gewinn-Ton abspielen
+  isSpinning = false;
+}
+
+// 🎶 Melodie während Spin
+void playMelody(int noteIndex) {
+  int melody[] = {262, 294, 330, 349, 392, 440, 494, 523};  // C-Dur
+  int duration = 100;
+  tone(Buzzer, melody[noteIndex % 8], duration);
+}
+
+void playWinTone() {
+  tone(Buzzer, 1000, 500);  // Hoher Ton für 0,5 Sek.
+  delay(500);
+  tone(Buzzer, 800, 500);   // Tieferer Ton für 0,5 Sek.
+  delay(500);
+  noTone(Buzzer);
+}
+
