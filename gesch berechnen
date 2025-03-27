@@ -1,0 +1,66 @@
+long duration;
+float distance;
+float lastDistance = 0;
+unsigned long lastTime = 0;
+
+int T = 9;
+int E = 10;
+int buttonPin = 7; // Knopf an Pin 7
+bool isMeasuring = false;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(T, OUTPUT);
+  pinMode(E, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP); // Knopf mit internem Pullup-Widerstand
+}
+
+void loop() {
+  // Prüfen, ob der Knopf gedrückt wurde
+  if (digitalRead(buttonPin) == LOW) {
+    isMeasuring = true;  // Messung starten
+    Serial.println("Messung gestartet...");
+    delay(300); // Kurze Wartezeit, um Prellen zu vermeiden
+  }
+
+  if (isMeasuring) {
+    unsigned long currentTime = millis();
+
+    // Ultraschallsensor auslösen
+    digitalWrite(T, LOW);
+    delayMicroseconds(2);
+    digitalWrite(T, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(T, LOW);
+
+    // Echo-Zeit messen
+    duration = pulseIn(E, HIGH);
+    distance = duration * 0.034 / 2;
+
+    // Geschwindigkeit berechnen (falls nicht erste Messung)
+    if (lastTime > 0) {
+      float deltaS = lastDistance - distance;
+      float deltaT = (currentTime - lastTime) / 1000.0;
+      float velocity = deltaS / deltaT;
+
+      Serial.print("Zeit: ");
+      Serial.print(currentTime);
+      Serial.print(" ms, Abstand: ");
+      Serial.print(distance);
+      Serial.print(" cm, Geschwindigkeit: ");
+      Serial.print(velocity);
+      Serial.println(" cm/s");
+    } else {
+      Serial.print("Zeit: ");
+      Serial.print(currentTime);
+      Serial.print(" ms, Abstand: ");
+      Serial.println(distance);
+    }
+
+    // Werte speichern
+    lastDistance = distance;
+    lastTime = currentTime;
+
+    delay(100); // 10 Messungen pro Sekunde
+  }
+}
