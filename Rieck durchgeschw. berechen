@@ -1,0 +1,35 @@
+int T = 9;
+int E = 10;
+int buttonPin = 7;
+bool isMeasuring = false;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(T, OUTPUT);
+  pinMode(E, INPUT);
+  pinMode(buttonPin, INPUT);
+}
+
+void loop() {
+  if (digitalRead(buttonPin) == HIGH) {
+    isMeasuring = true;
+  }
+
+  if (isMeasuring) {
+    float currentTime = millis();
+    float lastTime;
+
+    digitalWrite(T, LOW);
+    delayMicroseconds(2);
+    digitalWrite(T, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(T, LOW);
+
+    duration = pulseIn(E, HIGH);
+    distance = duration * 0.034 / 2;
+    
+    lastTime = currentTime;
+
+    delay(100);
+  }
+}
