@@ -1,7 +1,14 @@
 int T = 9;
 int E = 10;
 int buttonPin = 7;
-bool isMeasuring = false;
+
+bool isMeasuring = true;
+
+long duration;
+float distance;
+float lastDistance = 0;
+unsigned long lastTime = 0;
+float currentTime = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -16,8 +23,7 @@ void loop() {
   }
 
   if (isMeasuring) {
-    float currentTime = millis();
-    float lastTime;
+    currentTime = millis();
 
     digitalWrite(T, LOW);
     delayMicroseconds(2);
@@ -27,7 +33,28 @@ void loop() {
 
     duration = pulseIn(E, HIGH);
     distance = duration * 0.034 / 2;
+
+    float deltaTime = (currentTime - lastTime) / 1000.0; // einfach wieder von 2 messpunkten die zeit genommen wird und nicht die gesamte und dann durch 1000 zu sekunde und deltaTime ist einfach meine Variabel weil man das in spielen benutzt um frames einheitlich zu machen
+
+    float speed = 0;    // das ist einfach die Geschwindigkeit auf 0
+    if (deltaTime > 0) {    // Das ist dafür das man nicht mit 0 dividiert es checkt jeden messpunkt die zeit
+      speed = abs(distance - lastDistance) / deltaTime; // dis - Ldis ist einfach jeden messpunkt zum nbächsten die strecke also nicht die ganze strecke
+      // abs ist dafür das alles immer positiv ist das ist einfach ne funktion. und dann mit deltaTime dividiert
+    }
+
+    currentTime = currentTime / 100;
+
+    // Ausgabe
+    Serial.print(distance);
+    Serial.print(" cm");
+    Serial.print("   |   ");
+    Serial.print(currentTime);
+    Serial.print("sek");
+    Serial.print("   |   ");
+    Serial.print(speed);
+    Serial.println(" cm/s");
     
+    lastDistance = distance;
     lastTime = currentTime;
 
     delay(100);
