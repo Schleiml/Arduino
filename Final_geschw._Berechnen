@@ -1,0 +1,63 @@
+int T = 9;
+int E = 10;
+int buttonPin = 7;
+
+bool isMeasuring = true;
+
+long duration;
+float distance;
+float lastDistance = 0;
+unsigned long lastTime = 0;
+float currentTime = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(T, OUTPUT);
+  pinMode(E, INPUT);
+  pinMode(buttonPin, INPUT);
+}
+
+void loop() {
+  if (digitalRead(buttonPin) == HIGH) {
+    isMeasuring = true;
+  }
+
+  if (isMeasuring) {
+    currentTime = millis();
+
+    digitalWrite(T, LOW);
+    delayMicroseconds(2);
+    digitalWrite(T, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(T, LOW);
+
+    duration = pulseIn(E, HIGH);
+    distance = (duration * 0.034 / 2) / 100;
+
+    float deltaTime = (currentTime - lastTime) / 1000.0;
+
+    float speed = 0;
+    if (deltaTime > 0) {
+      speed = abs(distance - lastDistance) / deltaTime;
+    }
+    if (distance >= 0.01 && distance <= 1.10) {
+
+        Serial.print(distance);
+        Serial.print("m");
+        Serial.print("   |   ");
+        Serial.print(currentTime / 1000);
+        Serial.print("sek");
+        Serial.print("   |   ");
+        Serial.print(speed);
+        Serial.println(" m/s");
+    }
+    else { 
+        Serial.println("Messung nicht erfolgt");
+    }
+    
+    lastDistance = distance;
+    lastTime = currentTime;
+
+    delay(100);
+  }
+}
